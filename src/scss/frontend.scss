@@ -1,0 +1,10 @@
+@import "./media-queries.scss";
+
+// Components
+@import '../../node_modules/bootstrap/scss/bootstrap-utilities.scss';
+@import '../../node_modules/bootstrap/scss/transitions'; 
+@import '../../node_modules/bootstrap/scss/accordion'; 
+@import './mini-cart.scss';
+
+// Sections
+@import './sections/faqs.scss';

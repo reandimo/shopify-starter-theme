@@ -1,0 +1,99 @@
+<div id="product-{{ product.variants.first.id }}" class="product-card">
+  <div class="product-image">
+    <a href="{{ product.url }}">
+      <img data-src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" class="lazyload">
+    </a>
+  </div>
+  <div class="product-details">
+    <h2 class="product-title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h2>
+    <div class="product-reviews-wrapper">
+      {% render 'judgeme_widgets',
+        widget_type: 'judgeme_preview_badge',
+        jm_style: '',
+        concierge_install: true,
+        product: product
+      %}
+    </div>
+    {% comment %} Price {% endcomment %}
+    <p class="product-price price-item--regular" data-regular-price>
+      {{ product.selected_or_first_available_variant.price | money }}
+    </p>
+    {% if product.compare_at_price > product.price %}
+      <p class="product-price price-item--sale" data-sale-price>
+        {{ product.selected_or_first_available_variant.compare_at_price | money }}
+      </p>
+    {% endif %}
+  </div>
+
+  {% if product.available %}
+    <form method="post" action="/cart/add" data-variants="{{ product.variants | json | escape }}">
+      <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+      {% if product.has_only_default_variant == false %}
+        <fieldset class="product-variants">
+          <legend>{{ product.options_by_name.size }}</legend>
+          {% for option in product.options_with_values %}
+            <div class="variant-option" data-option-index="{{ forloop.index0 }}">
+              <legend>{{ option.name }}</legend>
+              {% for value in option.values %}
+                <label class="variant-button">
+                  <input
+                    type="radio"
+                    name="options[{{ option.name | handleize }}]"
+                    value="{{ value | escape }}"
+                    {% if option.selected_value == value %}
+                      checked
+                    {% endif %}
+                  >
+                  <span>{{ value }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      {% endif %}
+    
+      <div class="product-variants-select">
+        <variant-selects
+          id="variant-selects"
+          class="no-js-hidden"
+          data-section="{{ section.id }}"
+          data-url="{{ product.url }}"
+        >
+          {% for option in product.options_with_values %}
+            <select
+              name="options[{{ option.name | handleize }}]"
+              id="Option-{{ section.id }}-{{ option.position }}"
+              class="select__select"
+              data-option="{{ option.name | handleize }}"
+            >
+              {% for value in option.values %}
+                <option
+                  value="{{ value | escape }}"
+                  {% if option.selected_value == value %}
+                    selected
+                  {% endif %}
+                >
+                  {{ value }}
+                </option>
+              {% endfor %}
+            </select>
+          {% endfor %}
+        </variant-selects>
+      </div>
+
+      <button type="submit" class="add-to-cart-button">Add to Cart
+        <span class="plus">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="19" viewBox="0 0 20 19" fill="none">
+            <path d="M9.9248 0.992249V17.9628" stroke="#193547" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M18.4102 9.47754H1.43959" stroke="#193547" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </span>
+      </button>
+    </form> 
+  {% else %}
+    <p class="product-unavailable">Out of stock.</p>
+  {% endif %}
+</div>

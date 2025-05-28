@@ -1,0 +1,28 @@
+
+// Mini cart custom design
+
+.mini-cart{
+
+
+    .dropdown-menu{
+        min-width: 380px;
+        right: 0;
+        left: auto;
+    }
+
+    .title{
+        font-size: 16px;
+    }
+
+    .quantity{
+        width: 120px;
+        input{
+            max-width: 48px;
+        }
+        .input-group-text{
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+}

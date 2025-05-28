@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="faqs-wrapper">
+    <div class="heading">
+      <h2>{{ section.settings.heading }}</h2>
+      {% if section.settings.cta_url and section.settings.cta_text %}
+        <a href="{{ section.settings.cta_url }}" class="btn-arrow">
+          {{ section.settings.cta_text }}
+          <span class="arrow"></span>
+        </a>
+      {% endif %}
+    </div>
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+      {% for block in section.blocks %}
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            {% if block.settings.icon %}
+              <img data-src="{{ block.settings.icon | image_url: width: 52  }}" class="item-icon lazyload">
+            {% endif %}
+            <button
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#question-{{forloop.index}}"
+              aria-controls="question-{{forloop.index}}"
+              {% if forloop.index == 1 %}
+                class="accordion-button"
+                aria-expanded="true"
+              {% else %}
+                class="accordion-button collapsed"
+                aria-expanded="false"
+              {% endif %}
+            >
+              {{ block.settings.question }}
+            </button>
+          </h2>
+          <div
+            id="question-{{forloop.index}}"
+            {% if forloop.index == 1 %}
+              class="accordion-collapse collapse show"
+            {% else %}
+              class="accordion-collapse collapse"
+            {% endif %}
+            data-bs-parent="#accordionFlushExample"
+          >
+            <div class="accordion-body">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQs",
+  "class": "xite-faqs",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "presets": [
+    {
+      "name": "FAQs"
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "CTA URL"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "CTA Text"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "ff-faqs",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
