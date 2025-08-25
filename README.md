@@ -1,214 +1,353 @@
+# Shopify Starter Theme
+
 <p align="center">
   <a href="https://www.nativo.team/">
-    <img alt="Logo" src="https://www.nativo.team/wp-content/uploads/2021/02/Nativo_Logo.webp" height="40">
+    <img alt="Nativo Logo" src="https://www.nativo.team/wp-content/uploads/2021/02/Nativo_Logo.webp" height="40">
   </a>
 </p>
- 
+
 <p align="center">
-  <strong>Shopify starter theme for Nativo projects</strong>
-</p> 
+  <strong>A modern, responsive Shopify starter theme for Nativo projects</strong>
+</p>
 
-## Requirements
+## 📋 Table of Contents
 
-Make sure all dependencies have been installed before moving on:
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Project Structure](#project-structure)
+- [Development Workflow](#development-workflow)
+- [Asset Management](#asset-management)
+- [JavaScript Architecture](#javascript-architecture)
+- [CSS Architecture](#css-architecture)
+- [Shopify Theme Development with GitHub](#shopify-theme-development-with-github)
+- [SEO Optimization](#seo-optimization)
+- [Performance Recommendations](#performance-recommendations)
+- [Useful Resources](#useful-resources)
 
-- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli/)
-- [Node.js](http://nodejs.org/) >= 16
+## 🚀 Requirements
 
-## Setup
+Before getting started, ensure you have the following installed:
 
-Run the following command on the root of the theme:
- 
-1. Run npm install command:
-```sh 
-npm install
+- [Shopify CLI](https://shopify.dev/docs/api/shopify-cli/) - For theme development and deployment
+- [Node.js](https://nodejs.org/) >= 16 - For package management and build tools
+
+## ⚡ Quick Start
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Start development mode:**
+   ```bash
+   npx mix watch
+   ```
+   
+   This will watch for changes in your source files and automatically compile them.
+
+3. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+## 📁 Project Structure
+
+```
+shopify-starter-theme/
+├── assets/                       # → Compiled theme assets
+├── config/                       # → Theme configuration files
+├── layout/                       # → Theme layout templates
+├── locales/                      # → Internationalization files
+├── sections/                     # → Reusable theme sections
+├── snippets/                     # → Reusable theme snippets
+├── templates/                    # → Page templates
+├── src/                          # → Source files (before compilation)
+│   ├── js/                       # → JavaScript source files
+│   │   ├── filters/              # → Custom filters
+│   │   ├── shared/               # → Shared utilities
+│   │   ├── snippets/             # → Component-specific JS
+│   │   └── frontend.js           # → Main frontend entry point
+│   └── scss/                     # → SCSS source files
+│       ├── sections/             # → Section-specific styles
+│       ├── snippets/             # → Component-specific styles
+│       ├── media-queries.scss    # → Responsive breakpoints
+│       └── frontend.scss         # → Main stylesheet
+├── package.json                  # → Node.js dependencies and scripts
+└── webpack.mix.js               # → Laravel Mix configuration
 ```
 
-2. Activate Webpack Watch to track changes on the scripts/styles files and compile.
+## 🔄 Development Workflow
 
-```sh 
-npx mix watch
+### 1. File Organization
+Each page should have its own script and style files for maintainability:
+
+```
+src/
+├── js/
+│   ├── pages/
+│   │   ├── home.js              # → Home page JavaScript
+│   │   └── shop.js              # → Shop page JavaScript
+│   └── components/
+│       └── product-card.js      # → Reusable components
+└── scss/
+    ├── pages/
+    │   ├── home.scss            # → Home page styles
+    │   └── shop.scss            # → Shop page styles
+    └── components/
+        └── product-card.scss    # → Component styles
 ```
 
-## File Structure
+### 2. Development Process
+1. Make changes to source files in the `src/` directory
+2. Laravel Mix automatically compiles and watches for changes
+3. Compiled files are output to the `assets/` directory
+4. Test changes in your Shopify development store
 
-Shopify starter theme comes with the following file structure:
+## 🎨 Asset Management
 
-```sh
+This theme uses **Laravel Mix** for asset compilation, which provides:
 
-shopify-theme-starter/			    # → Root of the theme
-├── assets/							        # → Theme assets (compiled)
-├── config/                    	# → Theme config
-├── layout/                    	# → Theme layout
-├── locales/                    # → Theme locales
-├── sections/                   # → Theme sections
-├── snipppets/                  # → Theme snippets
-├── templates/                  # → Theme templates
-├── src/                    		# → Theme source assets (before compilation)
-│   ├── fonts                   # → Theme fonts
-│   ├── styles                  # → Theme styles
-│   ├── scripts                 # → Theme javascript 
-├── node_modules/               # → Folder of the required Node.js packages (never edit)
-├── package.json                # → Node.js dependencies and scripts
-└── templates/                  # → Folder for all the templates and parts of the site
-```
+- **SCSS compilation** with autoprefixer
+- **JavaScript bundling** and minification
+- **Asset versioning** for cache busting
+- **Hot reloading** during development
+- **Source maps** for debugging
 
-## How to work with assets
+### Important Notes:
+- **Never edit files directly in the `assets/` folder** - they are auto-generated
+- **Always work in the `src/` directory** - your source files
+- **Run `npx mix watch`** during development for automatic compilation
+- **Run `npm run build`** before deploying to production
 
-Is very important when developing a theme to do maintainable code, this is why packing all the code in just one file (without using a compiler like Gulp or Webpack) is not acceptable. The starter theme uses **Laravel Mix** to compile SASS and JS so it's important to remember compile after you edit any file related, this can be done easily if you track your changes running `npm run watch` on the root of the theme.
+## ⚙️ JavaScript Architecture
 
-All the pages in the website must have their own script and style file, let’s see the following example:
+### Page-Specific JavaScript
+Each page should use a class-based approach to prevent code execution on other pages:
 
-We have 2 pages in our website: Home and Shop; so our file structure should looks like:
-
-```bash
-themes/your-theme-name/           # → Root of the theme
-
-├── src/                          # → Theme assets
-│   ├── fonts                     # → Theme fonts
-│   ├── styles                    # → Theme styles [sass files]
-│   │   ├── components
-│   │   │    └── *components styles*
-│   │   ├── pages
-│   │   │    ├── home.scss        # → Home styles
-│   │   │    └── shop.scss        # → Shop styles
-│   │   └── general.scss          # → [Optional] Theme general styles
-│   └── scripts                   # → Theme javascript
-│       ├── components
-│       │    └── *components javascript*
-│       └── pages
-│            ├── home.js          # → Home javascript
-│            └── shop.js          # → Shop javascript
-```
-
-Following that structure, all the JS files should be declared as classes and initialized inside the file. Let’s see the `home.js`  and `shop.js` example.
-
-```jsx
-// ---
-// Home
+```javascript
+// home.js
 import $ from "jquery";
 
-var HomePage = function(){
-
-    // object
-    var _ = this;
-
-    // view
-    _.$page = $('[data-page="home"]');
-
-    // init
-    _.init = function () {
-        console.log('init home.js')
+class HomePage {
+    constructor() {
+        this.$page = $('[data-page="home"]');
+        
+        if (this.$page.length) {
+            this.init();
+        }
     }
 
-    if (_.$page.length) {
-        _.init();
+    init() {
+        console.log('Home page initialized');
+        this.bindEvents();
     }
 
-};
+    bindEvents() {
+        // Event handlers here
+    }
+}
 
-// Initialize the page with a custom JS selector
-var pageHome = new HomePage();
+// Initialize only if we're on the home page
+new HomePage();
 ```
 
-```jsx
-// ---
-// Shop
-import $ from "jquery";
+### Component JavaScript
+```javascript
+// product-card.js
+class ProductCard {
+    constructor(selector) {
+        this.$element = $(selector);
+        
+        if (this.$element.length) {
+            this.init();
+        }
+    }
 
-var ShopPage = function (sel) {
-	// object
-	var _ = this;
+    init() {
+        this.bindEvents();
+    }
 
-	// view
-	_.$page = $(sel);
+    bindEvents() {
+        this.$element.on('click', '.add-to-cart', this.handleAddToCart.bind(this));
+    }
 
-	// init
-	this.init = function () {
+    handleAddToCart(e) {
+        // Add to cart logic
+    }
+}
 
+// Initialize product cards
+$('.product-card').each(function() {
+    new ProductCard(this);
+});
+```
+
+## 🎨 CSS Architecture
+
+### SCSS Structure
+- Use **BEM methodology** for class naming
+- Organize styles by component and page
+- Leverage SCSS features like variables, mixins, and nesting
+- Keep styles modular and reusable
+- Use the built-in responsive mixins for consistent breakpoints
+
+### Media Query Mixins
+The theme includes a comprehensive set of responsive mixins for consistent breakpoint usage:
+
+```scss
+// Available breakpoints
+$breakpoints: (
+  xs: 576px,    // Extra small devices
+  sm: 768px,    // Small devices (tablets)
+  md: 992px,    // Medium devices (desktops)
+  lg: 1200px    // Large devices (wide desktops)
+);
+
+// Usage examples:
+.hero-section {
+  padding: 1rem;
+  
+  // Apply styles for small devices and up
+  @include respond-above(sm) {
+    padding: 2rem;
   }
-	// ---
-
-	// only initialize the file if the page is loaded
-	if (_.$page.length) {
-		this.init();
-	}
-};
-
-// Initialize the page with a custom JS selector
-let pageShop = new ShopPage('.page-template-shop');
+  
+  // Apply styles for medium devices and down
+  @include respond-below(md) {
+    padding: 1.5rem;
+  }
+  
+  // Apply styles between specific breakpoints
+  @include respond-between(sm, lg) {
+    padding: 2.5rem;
+  }
+}
 ```
 
-The use of classes inside the JS is mandatory to prevent code execution on other pages in the site, all the JS and CSS files will be compiled with **Laravel Mix** to create 4 new files used by the theme:
+### Example SCSS Structure:
+```scss
+// _variables.scss
+$primary-color: #007bff;
 
-```bash
-themes/your-theme-name/             # → Root of the theme
-└── assets/                         # → Theme assets
-    ├── frontend.css                # → Compiled frontend related styles
-    └── frontend.js                 # → Compiled frontend related javascript
+// home.scss
+.home-page {
+    &__hero {
+        background: $primary-color;
+        padding: 1rem;
+        
+        // Responsive adjustments
+        @include respond-above(sm) {
+            padding: 2rem;
+        }
+        
+        @include respond-above(md) {
+            padding: 3rem;
+        }
+    }
+}
 ```
 
-The most important thing to keep in mind is to keep modules/pages separated and this process should be repeated for each page and compiled after edit.
+## 🚀 Shopify Theme Development with GitHub
 
-# Shopify Theme Development Using GitHub
+### Branch Strategy
+Use a two-branch workflow for organized development:
 
-## Introduction
+1. **`main` branch** - Production-ready code
+   - Only stable, tested changes
+   - Deploy directly to your Shopify store
+   - Tag releases for version tracking
 
-Developing Shopify themes can be a complex process, requiring careful version control, collaboration, and optimization. Leveraging GitHub for theme development simplifies workflow, ensures consistency, and helps manage iterations efficiently. This document outlines a streamlined approach to Shopify theme development using GitHub with a focus on organization, SEO optimization, and resources to enhance your process.
+2. **`develop` branch** - Development and testing
+   - New features and bug fixes
+   - Collaborate without affecting production
+   - Merge to main via pull requests
 
-## Why Bother?
+### Feature Development Workflow
+1. **Create an issue** with requirements and Monday.com URL
+2. **Create a feature branch** from `develop` (e.g., `feature/issue-123-new-header`)
+3. **Develop and test** your feature
+4. **Create a pull request** to merge into `develop`
+5. **Code review** and testing
+6. **Merge to main** when ready for production
 
-- **Version Control:** Track changes, revert to previous versions, and maintain a clear development history.
-- **Collaboration:** Easily share progress with teammates and facilitate code reviews.
-- **Organization:** Segregate production-ready code and in-progress changes for better workflow management.
-- **Backup & Recovery:** Securely store your theme files in the cloud and avoid accidental loss.
+### Best Practices
+- **Use Shopify CLI** for development and testing
+- **Commit frequently** with descriptive messages
+- **Link commits to issues** using `#issue-number`
+- **Test thoroughly** before merging to main
+- **Use semantic versioning** for releases
 
-## Use Two GitHub Branches: Main and Develop
+## 🔍 SEO Optimization
 
-1. **Main Branch**
-    - The primary branch for production-ready code.
-    - Only stable, thoroughly tested changes should be merged here.
-    - Use this branch to deploy updates to your Shopify store.
-2. **Develop Branch**
-    - The working branch for new features, bug fixes, and experiments.
-    - This branch allows developers to collaborate without affecting the live site.
-    - Once changes in `develop` are stable, they can be merged into `main` via pull requests.
-    - Use Shopify CLI to code, test, and commit. When you change something in Shopify the repo is updated, this is fine for small changes but if you’re coding a feature use Shopify CLI to code and commit when ready. This makes the repo easier to track.
+### Meta Tags
+- Unique, descriptive page titles (50-60 characters)
+- Compelling meta descriptions (150-160 characters)
+- Proper Open Graph tags for social sharing
 
-## Create Issues and Branches for New Features
+### Image Optimization
+- Compress images using tools like [Photopea](https://photopea.com/)
+- Use descriptive alt attributes
+- Implement lazy loading for better performance
 
-- When a new feature is requested, create a GitHub issue with the Monday URL attached to outline the requirements and track progress.
-- Create a new branch for the feature (e.g., `feature/issue-123-new-header`) and link it to the issue.
-- Once the feature is complete and tested, merge the branch into `develop` (or `main` if ready for launch) using a pull request.
-- After the branch is merged, close the issue to signal completion.
-- This ensures traceability and a structured development process.
+### Structured Data
+- Implement JSON-LD markup for rich results
+- Use [JSON-LD Generator](https://jsonld.com/) for testing
+- Include product, organization, and breadcrumb schemas
 
-## Use of NPM and Modern Compilers
+### Performance
+- Optimize Core Web Vitals
+- Implement lazy loading
+- Use responsive images
+- Minimize render-blocking resources
 
-- Leverage **NPM** to manage project dependencies, such as JavaScript libraries and CSS frameworks.
-- Use modern compilers like **Laravel Mix** to streamline asset compilation and minification.
-    - Write in modern JavaScript (ES6+) and SCSS, and let Laravel Mix handle transpiling for browser compatibility.
-    - Automate tasks like concatenation, versioning, and hot-reloading to save time and reduce errors. 
+## ⚡ Performance Recommendations
 
-## SEO Optimization Recommendations
+### JavaScript Libraries
+- **Sliders**: Use [Swiper.js](https://swiperjs.com/) instead of Slick
+- **Modals**: [Fancybox](https://fancyapps.com/) for image galleries
+- **Notifications**: [Noty.js](https://ned.im/noty/) for toast messages
+- **Accordions**: [Accordion.js](https://accordion.js.org/) for collapsible content
 
-1. **Optimize Meta Tags:** Ensure meta titles and descriptions are concise, unique, and relevant.
-2. **Image Optimization:** Compress images and use descriptive alt attributes. You can do this for free with [Photopea](https://photopea.com/) App.
-3. **Structured Data:** Implement JSON-LD for rich results and better search engine understanding.
-4. **Lazy Loading:** Defer loading of offscreen images and video to improve page speed.
-5. **Mobile Responsiveness:** Ensure your theme is fully responsive and performs well on all devices.
-6. **404 Page Optimization:** Create custom, user-friendly 404 pages with helpful links.
-7. **Regular Audits:** Use tools like Google Lighthouse or GTmetrix to monitor and improve performance.
+### Development Tools
+- **Google Lighthouse** for performance auditing
+- **GTmetrix** for detailed performance analysis
+- **Shopify CLI** for local development and testing
 
-## Misc. Recommendations
+## 📚 Useful Resources
 
-- Use new JS packages for sliders like Swiper instead of slick.
-- Fancybox JS for Image galleries and popups.
-- Noty.js for toastrs.
-- accordion-js for accordions.
+### Shopify Development
+- [Shopify Dev Tips: Lazy Loading](https://www.youtube.com/watch?v=dd3kpLt9KZY)
+- [Shopify Theme Development](https://shopify.dev/docs/themes)
+- [Shopify CLI Documentation](https://shopify.dev/docs/api/shopify-cli/)
 
-## Resource Links
-
-- [**Shopify Dev Tips: Lazy Loading**](https://www.youtube.com/watch?v=dd3kpLt9KZY)
+### Version Control & Collaboration
 - [GitHub Best Practices](https://docs.github.com/en/get-started/quickstart)
+- [Git Flow Workflow](https://nvie.com/posts/a-successful-git-branching-model/)
+
+### Performance & SEO
+- [Google PageSpeed Insights](https://pagespeed.web.dev/)
+- [GTmetrix](https://gtmetrix.com/)
 - [JSON-LD Generator](https://jsonld.com/)
+
+### Design & Development
+- [BEM Methodology](https://en.bem.info/)
+- [SCSS Documentation](https://sass-lang.com/documentation)
+- [Laravel Mix Documentation](https://laravel-mix.com/)
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch from `develop`
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is proprietary to Nativo Team. All rights reserved.
+
+---
+
+**Need help?** Contact the Nativo development team or create an issue in this repository.
